@@ -12,6 +12,16 @@ namespace CarbCalc
     [Activity(Label = "Manual Calculation - New Food", Icon = "@drawable/icon")]
     public class ManualCalc : Activity
     {
+        private TextView CarbCalcText => FindViewById<TextView>(Resource.Id.textCarbTotal);
+        private EditText NewFoodItem => FindViewById<EditText>(Resource.Id.food);
+        private EditText Size => FindViewById<EditText>(Resource.Id.size);
+        private EditText GramsPerSize => FindViewById<EditText>(Resource.Id.gramspersize);
+        private EditText Grams => FindViewById<EditText>(Resource.Id.Grams);
+        private EditText Portion => FindViewById<EditText>(Resource.Id.Portion);
+        private Button CalcButton => FindViewById<Button>(Resource.Id.calculate);
+        private Button ClearButton => FindViewById<Button>(Resource.Id.clear);
+        private ListView Grid => FindViewById<ListView>(Resource.Id.listview);
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -35,10 +45,7 @@ namespace CarbCalc
 
             ClearButton.Click += (sender, e) =>
             {
-                CurrentSelected.ItemisedMeal.Clear();
-                Grid.Adapter = new MealCalcAdapter(this, CurrentSelected.ItemisedMeal);
-                CarbCalcText.Text = "";
-                ClearButton.Visibility =ViewStates.Invisible;
+                ClearFields();
             };
 
             if (!CurrentSelected.ItemisedMeal.Any()) return;
@@ -51,6 +58,17 @@ namespace CarbCalc
                 $"Total: {Math.Round(CurrentSelected.ItemisedMeal.Sum(x => x.ServingCarbs), 1)}g Carbs";
         }
 
+        private void ClearFields()
+        {
+            CurrentSelected.ItemisedMeal.Clear();
+            Grid.Adapter = new MealCalcAdapter(this, CurrentSelected.ItemisedMeal);
+            CarbCalcText.Text = "";
+            ClearButton.Visibility = ViewStates.Invisible;
+            NewFoodItem.Text = "";
+            Size.Text = "";
+            GramsPerSize.Text = "";
+        }
+
         public void DismissKeyboard(Activity activity)
         {
             var imm = (InputMethodManager)activity.GetSystemService(InputMethodService);
@@ -58,16 +76,6 @@ namespace CarbCalc
                 imm.HideSoftInputFromWindow(activity.CurrentFocus
                     .WindowToken, 0);
         }
-
-        private TextView CarbCalcText => FindViewById<TextView>(Resource.Id.textCarbTotal);
-        private EditText NewFoodItem => FindViewById<EditText>(Resource.Id.food);
-        private EditText Size => FindViewById<EditText>(Resource.Id.size);
-        private EditText GramsPerSize => FindViewById<EditText>(Resource.Id.gramspersize);
-        private EditText Grams => FindViewById<EditText>(Resource.Id.Grams);
-        private EditText Portion => FindViewById<EditText>(Resource.Id.Portion);
-        private Button CalcButton => FindViewById<Button>(Resource.Id.calculate);
-        private Button ClearButton => FindViewById<Button>(Resource.Id.clear);
-        private ListView Grid => FindViewById<ListView>(Resource.Id.listview);
 
       
         private void CalculateCarbs()
@@ -108,6 +116,15 @@ namespace CarbCalc
 
             CarbCalcText.Text = $"{Math.Round(CurrentSelected.ItemisedMeal.Sum(x=> x.ServingCarbs), 1)}g Carbs";
             ClearButton.Visibility = ViewStates.Visible;
+
+            //SaveNewFoodItem();
+        }
+
+        private void SaveNewFoodItem()
+        {
+            var input = Assets.Open(CurrentSelected.FileName);
+
+            CurrentSelected.SaveCurrent(input);
         }
     }
 }

@@ -12,34 +12,36 @@ using Android.Widget;
 
 namespace CarbCalc
 {
-    public class FoodItemAdapter : BaseAdapter<FoodItem>
+    public class FoodItemAdapter : BaseAdapter<FoodItem>, IFilterable
     {
-        List<FoodItem> items;
-        Activity context;
-        public FoodItemAdapter(Activity context, List<FoodItem> items) : base()
+        public readonly List<FoodItem> Items;
+        public List<FoodItem> MatchItems;
+        private readonly Activity _context;
+        public Filter Filter { get; }
+
+        public FoodItemAdapter(Activity context, List<FoodItem> items)
         {
-            this.context = context;
-            this.items = items;
+            _context = context;
+            Items = items;
+
+            Filter = new FoodItemFilter(this);
         }
         public override long GetItemId(int position)
         {
             return position;
         }
-        public override FoodItem this[int position]
-        {
-            get { return items[position]; }
-        }
-        public override int Count
-        {
-            get { return items.Count; }
-        }
+
+        public override FoodItem this[int position] => Items[position];
+
+        public override int Count => Items.Count;
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            View view = convertView; // re-use an existing view, if one is available
-            if (view == null) // otherwise create a new one
-                view = context.LayoutInflater.Inflate(Android.Resource.Layout.SimpleListItem1, null);
-            view.FindViewById<TextView>(Android.Resource.Id.Text1).Text = items[position].ItemName;
+            // re-use an existing view, if one is available
+            var view = convertView ?? _context.LayoutInflater.Inflate(Android.Resource.Layout.SimpleListItem1, null); 
+            view.FindViewById<TextView>(Android.Resource.Id.Text1).Text = Items[position].ItemName;
             return view;
         }
+
     }
 }
