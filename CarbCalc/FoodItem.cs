@@ -15,7 +15,7 @@ namespace CarbCalc
 
         public int CarbCounterSize { get; set; }
 
-        public int CarbCounterGrams { get; set; }
+        public double CarbCounterGrams { get; set; }
         public double ServingSize { get; set; }
         public double ServingCarbs { get; set; }
     }

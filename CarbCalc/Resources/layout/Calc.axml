@@ -13,24 +13,30 @@
         android:id="@+id/textFoodItemDesc"
         android:padding="40px"
         android:textSize="60px" />
-    <EditText
-        android:id="@+id/Grams"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/LinearLayoutEntry"
         android:layout_height="wrap_content"
-        android:padding="40px"
-        android:hint="Enter Grams"
-        android:selectAllOnFocus="true"
-        android:inputType="number"
-        android:textIsSelectable="true" />
-    <EditText
-        android:id="@+id/Portion"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="40px"
-        android:hint="Enter Portion"
-        android:inputType="numberDecimal"
-        android:textIsSelectable="true"
-        android:selectAllOnFocus="true" />
+        android:layout_alignParentBottom="true">
+        <EditText
+            android:id="@+id/Grams"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="40px"
+            android:hint="Enter Grams"
+            android:inputType="numberDecimal"
+            android:textIsSelectable="true" />
+        <EditText
+            android:id="@+id/Portion"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="40px"
+            android:hint="Enter Portion"
+            android:inputType="numberDecimal"
+            android:textIsSelectable="true" />
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/LinearLayoutButtons"
         android:layout_height="wrap_content"

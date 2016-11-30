@@ -54,6 +54,9 @@ namespace CarbCalc
 
             GramsPerSize.RequestFocus();
 
+            Portion.FocusChange += (sender, args) => { Grams.Text = ""; };
+            Grams.FocusChange += (sender, args) => { Portion.Text = ""; };
+
             CarbCalcText.Text =
                 $"Total: {Math.Round(CurrentSelected.ItemisedMeal.Sum(x => x.ServingCarbs), 1)}g Carbs";
         }
@@ -95,10 +98,10 @@ namespace CarbCalc
 
             CurrentSelected.CurrentFoodItem.ItemName = NewFoodItem.Text;
             CurrentSelected.CurrentFoodItem.CarbCounterSize = int.Parse(Size.Text);
-            CurrentSelected.CurrentFoodItem.CarbCounterGrams = int.Parse(GramsPerSize.Text);
+            CurrentSelected.CurrentFoodItem.CarbCounterGrams =Convert.ToDouble(GramsPerSize.Text);
 
             var grams = (!string.IsNullOrEmpty(Grams.Text))
-                ? (double) int.Parse(Grams.Text)
+                ? Convert.ToDouble(Grams.Text)
                 : 0;
 
             var portion = grams > 0 ? grams / CurrentSelected.CurrentFoodItem.CarbCounterSize

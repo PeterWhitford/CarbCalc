@@ -46,6 +46,9 @@ namespace CarbCalc
                 ClearButton.Visibility =ViewStates.Invisible;
             };
 
+            Portion.FocusChange += (sender, args) => { Grams.Text = ""; };
+            Grams.FocusChange += (sender, args) => { Portion.Text = ""; };
+
             if (CurrentSelected.ItemisedMeal.Any())
             {
                 ClearButton.Visibility = ViewStates.Visible;
@@ -91,7 +94,7 @@ namespace CarbCalc
         private void CalculateCarbs()
         {
             var grams = (!string.IsNullOrEmpty(Grams.Text))
-                ? (double) int.Parse(Grams.Text)
+                ? Convert.ToDouble(Grams.Text)
                 : 0;
 
             var portion = grams > 0 ? grams / CurrentSelected.CurrentFoodItem.CarbCounterSize

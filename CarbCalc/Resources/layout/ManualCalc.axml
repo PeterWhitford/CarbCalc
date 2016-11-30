@@ -27,24 +27,31 @@
         android:layout_width="match_parent"
         android:layout_height="20px"
         android:id="@+id/space1" />
-    <EditText
-        android:id="@+id/Grams"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/LinearLayoutButtons"
         android:layout_height="wrap_content"
-        android:padding="40px"
-        android:hint="Enter Actual Grams"
-        android:selectAllOnFocus="true"
-        android:inputType="number"
-        android:textIsSelectable="true" />
-    <EditText
-        android:id="@+id/Portion"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="40px"
-        android:hint="Enter Actual Portion"
-        android:inputType="numberDecimal"
-        android:textIsSelectable="true"
-        android:selectAllOnFocus="true" />
+        android:layout_alignParentBottom="true">
+        <EditText
+            android:id="@+id/Grams"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="40px"
+            android:hint="Actual Grams"
+            android:inputType="numberDecimal"
+            android:textIsSelectable="true" />
+        <EditText
+            android:id="@+id/Portion"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="40px"
+            android:hint="Portion Size"
+            android:inputType="numberDecimal"
+            android:textIsSelectable="true"
+            android:selectAllOnFocus="true" />
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/LinearLayoutButtons"
         android:layout_height="wrap_content"
