@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Environment = System.Environment;
 
 namespace CarbCalc
 {
@@ -26,6 +27,44 @@ namespace CarbCalc
             SetContentView(Resource.Layout.Main);
 
             Initialise();
+
+            InitialiseDatabase();
+
+            ReadItemsFromDatabase();
+        }
+
+        private void InitialiseDatabase()
+        {
+            var docFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+            var dbFile = Path.Combine(docFolder, SqlLiteDroid.FileName); // FILE NAME TO USE WHEN COPIED
+
+            //if (File.Exists(dbFile)) return;
+            if (File.Exists(dbFile))
+            {
+                File.Delete(dbFile);
+            }
+
+            var s = Resources.OpenRawResource(Resource.Raw.CarbCalc); // DATA FILE RESOURCE ID
+
+            var writeStream = new FileStream(dbFile, FileMode.OpenOrCreate, FileAccess.Write);
+
+            ReadWriteStream(s, writeStream);
+        }
+
+        private void ReadWriteStream(Stream readStream, Stream writeStream)
+        {
+            int Length = 256;
+            Byte[] buffer = new Byte[Length];
+            int bytesRead = readStream.Read(buffer, 0, Length);
+            // write the required bytes
+            while (bytesRead > 0)
+            {
+                writeStream.Write(buffer, 0, bytesRead);
+                bytesRead = readStream.Read(buffer, 0, Length);
+            }
+            readStream.Close();
+            writeStream.Close();
         }
 
         private void Initialise()
@@ -43,13 +82,9 @@ namespace CarbCalc
 
             try
             {
+                //ReadItemsFromDatabase();
+
                 GetFoodItemsFromCsvFile();
-
-                //var autoCompleteAdapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleDropDownItem1Line, 
-                //    _items.Select(x=>x.ItemName).ToList());
-
-                //Search.Adapter = autoCompleteAdapter;
-
             }
             catch (Exception e)
             {
@@ -67,9 +102,14 @@ namespace CarbCalc
         {
             var searchString = e.Text.ToString();
 
+            SearchItems(searchString);
 
-            //((FoodItemAdapter)List.Adapter).Filter.InvokeFilter(searchString);
+            List.Adapter = new FoodItemAdapter(this,
+                _items);
+        }
 
+        private void SearchItems(string searchString)
+        {
             switch (searchString.Length)
             {
                 case 0:
@@ -77,16 +117,17 @@ namespace CarbCalc
                     break;
 
                 case 1:
-                    _items = _originalItems.Where(x => x.ItemName.StartsWith(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+                    _items =
+                        _originalItems.Where(x => x.ItemName.StartsWith(searchString, StringComparison.OrdinalIgnoreCase))
+                            .ToList();
                     break;
 
                 default:
-                    _items = _originalItems.Where(x => x.ItemName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+                    _items =
+                        _originalItems.Where(x => x.ItemName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
+                            .ToList();
                     break;
             }
-
-            List.Adapter = new FoodItemAdapter(this,
-                _items);
         }
 
         private void List_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
@@ -97,37 +138,21 @@ namespace CarbCalc
 
         }
 
+
         private void GetFoodItemsFromCsvFile()
         {
             var input = Assets.Open(CurrentSelected.FileName);
-
-            var message = Toast.MakeText(this, "Loading FoodItem Items", ToastLength.Short);
-
-            message.Show();
 
             using (var sr = new StreamReader(input))
             {
                 var str = sr.ReadToEnd();
 
-                var lines = Regex.Split(str, "\r\n");
+                var lines = Regex.Split(str, Environment.NewLine);
 
-                _originalItems = lines.Select(x =>
-
-                    {
-                        var field = x.Split(',');
-                        return new FoodItem
-                        {
-                            Category = field[0],
-                            //SubCategory = field[1],
-                            ItemName = field[1],
-                            CarbCounterSize = int.Parse(field[2]),
-                            CarbCounterGrams = int.Parse(field[3])
-                        };
-                    }
-                ).OrderBy(x => x.ItemName).ToList();
+                _originalItems = lines.Select(CreateFoodItem)
+                    .OrderBy(x => x.ItemName).ToList();
 
             }
-            message.Cancel();
 
             _items = new List<FoodItem>(_originalItems);
 
@@ -137,6 +162,45 @@ namespace CarbCalc
             Search.TextChanged += Search_TextChanged;
 
         }
+
+        private static FoodItem CreateFoodItem(string foodString)
+        {
+            var field = foodString.Split(',');
+            return new FoodItem
+            {
+                Category = field[0],
+                //SubCategory = field[1],
+                ItemName = field[1],
+                CarbCounterSize = int.Parse(field[2]),
+                CarbCounterGrams = int.Parse(field[3])
+            };
+        }
+
+        private void ReadItemsFromDatabase()
+        {
+            //var dbPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+            //var message = Toast.MakeText(this, "Loading FoodItem Items from " + dbPath, ToastLength.Short);
+
+            //message.Show();
+
+            //SqlLiteDroid.ExtractDb(Assets, dbPath);
+
+            var sql = SqlLiteDroid.GetSqLiteConnection();
+
+            var cmd = sql.CreateCommand("Select * from FoodItem");
+
+            _items = cmd.ExecuteQuery<FoodItem>().OrderBy(x => x.ItemName).ToList();
+
+            List.Adapter = new FoodItemAdapter(this, _items);
+
+            //message.Cancel();
+
+            List.ItemClick += List_ItemClick;
+            Search.TextChanged += Search_TextChanged;
+
+        }
+
 
         public override void OnBackPressed()
         {

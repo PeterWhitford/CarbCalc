@@ -71,12 +71,19 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GenericTextWatcher.cs" />
+    <Compile Include="SQLiteUtil.cs" />
+    <Compile Include="SqlLite_Droid.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Calc.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidAsset Include="Assets\Carbs.csv" />
+    <AndroidAsset Include="Assets\CarbCalc.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidAsset>
+    <AndroidAsset Include="Assets\Carbs.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidAsset>
     <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
@@ -89,6 +96,9 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\ManualCalc.axml">
       <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\raw\CarbCalc.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>

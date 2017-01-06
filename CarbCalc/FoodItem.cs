@@ -2,6 +2,7 @@
 
 namespace CarbCalc
 {
+    [Table("FoodItem")]
     public class FoodItem
     {
         [PrimaryKey, AutoIncrement]
