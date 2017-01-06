@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Environment = System.Environment;
 
 namespace CarbCalc
@@ -13,8 +12,6 @@ namespace CarbCalc
     [Activity(Label = "Carb Calc", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
-        private List<FoodItem> _originalItems;
-        private List<FoodItem> _items;
         private Button NewButton => FindViewById<Button>(Resource.Id.newFood);
         private Button ClearButton => FindViewById<Button>(Resource.Id.clear);
         private ListView List => FindViewById<ListView>(Resource.Id.foodlist);
@@ -27,10 +24,6 @@ namespace CarbCalc
             SetContentView(Resource.Layout.Main);
 
             Initialise();
-
-            InitialiseDatabase();
-
-            ReadItemsFromDatabase();
         }
 
         private void InitialiseDatabase()
@@ -39,11 +32,12 @@ namespace CarbCalc
 
             var dbFile = Path.Combine(docFolder, SqlLiteDroid.FileName); // FILE NAME TO USE WHEN COPIED
 
-            //if (File.Exists(dbFile)) return;
-            if (File.Exists(dbFile))
-            {
-                File.Delete(dbFile);
-            }
+            if (File.Exists(dbFile)) return;
+
+            //if (File.Exists(dbFile))
+            //{
+            //    File.Delete(dbFile);
+            //}
 
             var s = Resources.OpenRawResource(Resource.Raw.CarbCalc); // DATA FILE RESOURCE ID
 
@@ -54,15 +48,18 @@ namespace CarbCalc
 
         private void ReadWriteStream(Stream readStream, Stream writeStream)
         {
-            int Length = 256;
-            Byte[] buffer = new Byte[Length];
-            int bytesRead = readStream.Read(buffer, 0, Length);
-            // write the required bytes
+            const int length = 256;
+
+            var buffer = new byte[length];
+
+            var bytesRead = readStream.Read(buffer, 0, length);
+
             while (bytesRead > 0)
             {
                 writeStream.Write(buffer, 0, bytesRead);
-                bytesRead = readStream.Read(buffer, 0, Length);
+                bytesRead = readStream.Read(buffer, 0, length);
             }
+
             readStream.Close();
             writeStream.Close();
         }
@@ -82,9 +79,11 @@ namespace CarbCalc
 
             try
             {
-                //ReadItemsFromDatabase();
 
-                GetFoodItemsFromCsvFile();
+                InitialiseDatabase();
+
+                ReadItemsFromDatabase();
+
             }
             catch (Exception e)
             {
@@ -105,7 +104,7 @@ namespace CarbCalc
             SearchItems(searchString);
 
             List.Adapter = new FoodItemAdapter(this,
-                _items);
+                CurrentSelected.Items);
         }
 
         private void SearchItems(string searchString)
@@ -113,18 +112,18 @@ namespace CarbCalc
             switch (searchString.Length)
             {
                 case 0:
-                    _items = new List<FoodItem>(_originalItems);
+                    CurrentSelected.Items = new List<FoodItem>(CurrentSelected.OriginalItems);
                     break;
 
                 case 1:
-                    _items =
-                        _originalItems.Where(x => x.ItemName.StartsWith(searchString, StringComparison.OrdinalIgnoreCase))
+                    CurrentSelected.Items =
+                        CurrentSelected.OriginalItems.Where(x => x.ItemName.StartsWith(searchString, StringComparison.OrdinalIgnoreCase))
                             .ToList();
                     break;
 
                 default:
-                    _items =
-                        _originalItems.Where(x => x.ItemName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
+                    CurrentSelected.Items =
+                        CurrentSelected.OriginalItems.Where(x => x.ItemName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
                             .ToList();
                     break;
             }
@@ -132,82 +131,32 @@ namespace CarbCalc
 
         private void List_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            CurrentSelected.CurrentFoodItem = _items[e.Position];
+            CurrentSelected.CurrentFoodItem = CurrentSelected.Items[e.Position];
 
             StartActivity(typeof(Calc));
 
         }
 
-
-        private void GetFoodItemsFromCsvFile()
-        {
-            var input = Assets.Open(CurrentSelected.FileName);
-
-            using (var sr = new StreamReader(input))
-            {
-                var str = sr.ReadToEnd();
-
-                var lines = Regex.Split(str, Environment.NewLine);
-
-                _originalItems = lines.Select(CreateFoodItem)
-                    .OrderBy(x => x.ItemName).ToList();
-
-            }
-
-            _items = new List<FoodItem>(_originalItems);
-
-            List.Adapter = new FoodItemAdapter(this, _items);
-
-            List.ItemClick += List_ItemClick;
-            Search.TextChanged += Search_TextChanged;
-
-        }
-
-        private static FoodItem CreateFoodItem(string foodString)
-        {
-            var field = foodString.Split(',');
-            return new FoodItem
-            {
-                Category = field[0],
-                //SubCategory = field[1],
-                ItemName = field[1],
-                CarbCounterSize = int.Parse(field[2]),
-                CarbCounterGrams = int.Parse(field[3])
-            };
-        }
-
         private void ReadItemsFromDatabase()
         {
-            //var dbPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-
-            //var message = Toast.MakeText(this, "Loading FoodItem Items from " + dbPath, ToastLength.Short);
-
-            //message.Show();
-
-            //SqlLiteDroid.ExtractDb(Assets, dbPath);
-
             var sql = SqlLiteDroid.GetSqLiteConnection();
 
             var cmd = sql.CreateCommand("Select * from FoodItem");
 
-            _items = cmd.ExecuteQuery<FoodItem>().OrderBy(x => x.ItemName).ToList();
+            CurrentSelected.Items = cmd.ExecuteQuery<FoodItem>().OrderBy(x => x.ItemName).ToList();
+            CurrentSelected.OriginalItems = CurrentSelected.Items.ToList();
 
-            List.Adapter = new FoodItemAdapter(this, _items);
-
-            //message.Cancel();
+            List.Adapter = new FoodItemAdapter(this, CurrentSelected.Items);
 
             List.ItemClick += List_ItemClick;
             Search.TextChanged += Search_TextChanged;
-
         }
-
 
         public override void OnBackPressed()
         {
             if (FragmentManager.BackStackEntryCount > 0)
                 base.OnBackPressed();
         }
-
     }
 }
 

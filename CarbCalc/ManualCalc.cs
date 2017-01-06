@@ -1,15 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Android.App;
-using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
-using Environment = System.Environment;
+using ServiceStack;
 
 namespace CarbCalc
 {
@@ -124,38 +120,20 @@ namespace CarbCalc
             CarbCalcText.Text = $"{Math.Round(CurrentSelected.ItemisedMeal.Sum(x=> x.ServingCarbs), 1)}g Carbs";
             ClearButton.Visibility = ViewStates.Visible;
 
-            //SaveNewFoodItem();
-        }
-
-        private void SaveFoodItemToCsvFile()
-        {
-            //var input = Assets.Open(CurrentSelected.FileName);
-
-            //using (var sr = new StreamWriter(input))
-            //{
-            //    var str = sr.ReadToEnd();
-
-            //    var lines = Regex.Split(str, Environment.NewLine);
-
-            //    _originalItems = lines.Select(CreateFoodItem)
-            //        .OrderBy(x => x.ItemName).ToList();
-
-            //}
-
-            //_items = new List<FoodItem>(_originalItems);
-
-            //List.Adapter = new FoodItemAdapter(this, _items);
-
-            //List.ItemClick += List_ItemClick;
-            //Search.TextChanged += Search_TextChanged;
-
+            SaveNewFoodItem();
         }
 
         private void SaveNewFoodItem()
         {
-            var input = Assets.Open(CurrentSelected.FileName);
+            var sql = SqlLiteDroid.GetSqLiteConnection();
 
-            CurrentSelected.SaveCurrent(input);
+            sql.Insert(CurrentSelected.CurrentFoodItem);
+
+            sql.Commit();
+
+            CurrentSelected.OriginalItems.Add(CurrentSelected.CurrentFoodItem);
+
+            //SqlLiteDroid.ExportDatabaseToCsv();
         }
     }
 }

@@ -1,8 +1,10 @@
-﻿using SQLite.Net.Attributes;
+﻿using System;
+using SQLite.Net.Attributes;
 
 namespace CarbCalc
 {
     [Table("FoodItem")]
+    [Serializable]
     public class FoodItem
     {
         [PrimaryKey, AutoIncrement]

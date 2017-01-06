@@ -22,5 +22,9 @@ namespace CarbCalc
                 sw.Close();
             }
         }
+
+        public static List<FoodItem> OriginalItems;
+        public static List<FoodItem> Items;
+
     }
 }

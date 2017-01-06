@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Android.Content.Res;
 using SQLite.Net;
 using SQLite.Net.Platform.XamarinAndroid;
@@ -9,6 +10,8 @@ using CarbCalc;
 using Java.IO;
 using Java.Nio.Channels;
 using Org.Apache.Http.Impl.Cookie;
+using ServiceStack;
+using ServiceStack.Text;
 using File = System.IO.File;
 
 namespace CarbCalc
@@ -51,40 +54,45 @@ namespace CarbCalc
                     }
                 }
             }
-
-
-            
         }
 
-        //public void exportDatabse(String databaseName)
-        //{
-        //    try
-        //    {
-        //        File sd = Environment.getExternalStorageDirectory();
-        //        File data = Environment.getDataDirectory();
+        public static void ExportDatabaseToCsv()
+        {
+            try
+            {
+                var folderPath = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, Android.OS.Environment.DirectoryDownloads);
 
-        //        if (sd.canWrite())
-        //        {
-        //            String currentDBPath = "//data//" + getPackageName() + "//databases//" + databaseName + "";
-        //            String backupDBPath = "backupname.db";
-        //            File currentDB = new File(data, currentDBPath);
-        //            File backupDB = new File(sd, backupDBPath);
+                var filePath = Path.Combine(folderPath, "CarbCalc Export.csv");
+                
+                var sql = SqlLiteDroid.GetSqLiteConnection();
 
-        //            if (currentDB.exists())
-        //            {
-        //                FileChannel src = new FileInputStream(currentDB).getChannel();
-        //                FileChannel dst = new FileOutputStream(backupDB).getChannel();
-        //                dst.transferFrom(src, 0, src.size());
-        //                src.close();
-        //                dst.close();
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
+                var cmd = sql.CreateCommand("Select * from FoodItem");
 
-        //    }
-        //}
+                var items = cmd.ExecuteQuery<FoodItem>().OrderBy(x => x.ItemName);
+
+                //var csvWriter = new CsvWriter<FoodItem>();
+                //var csvString = CsvSerializer.SerializeToCsv(items);
+
+                File.WriteAllText(filePath, string.Join("," , items.Select(x => $"\"{x.ItemName}\"").ToList()));
+
+
+                //using (var writeStream = new File(filePath, FileMode.OpenOrCreate, FileAccess.Write))
+                //{
+                //    writeStream.WriteTo(csvString);
+                //}
+
+                //System.IO.Stream st = MyDownloadService.ContentResolver.OpenInputStream(my_download_id);
+                //var newFile = System.IO.File.Create(new_file_path);
+                //st.CopyTo(newFile);
+                //fileStream.Close();
+
+
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
 
     }
 }

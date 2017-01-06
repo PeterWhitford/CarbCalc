@@ -71,7 +71,6 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GenericTextWatcher.cs" />
-    <Compile Include="SQLiteUtil.cs" />
     <Compile Include="SqlLite_Droid.cs" />
   </ItemGroup>
   <ItemGroup>
