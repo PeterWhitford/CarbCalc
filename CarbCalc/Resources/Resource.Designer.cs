@@ -95,8 +95,8 @@ namespace CarbCalc
 			// aapt resource value: 0x7f06000e
 			public const int gramspersize = 2131099662;
 			
-			// aapt resource value: 0x7f060008
-			public const int listview = 2131099656;
+			// aapt resource value: 0x7f060007
+			public const int listview = 2131099655;
 			
 			// aapt resource value: 0x7f06000a
 			public const int newFood = 2131099658;
@@ -110,8 +110,8 @@ namespace CarbCalc
 			// aapt resource value: 0x7f06000f
 			public const int space1 = 2131099663;
 			
-			// aapt resource value: 0x7f060007
-			public const int textCarbTotal = 2131099655;
+			// aapt resource value: 0x7f060008
+			public const int textCarbTotal = 2131099656;
 			
 			// aapt resource value: 0x7f060000
 			public const int textFoodItemDesc = 2131099648;

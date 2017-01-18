@@ -88,7 +88,7 @@ namespace CarbCalc
         private void SetDescription()
         {
             FoodItemDesc.Text =
-                $"{CurrentSelected.CurrentFoodItem.CarbCounterSize}g equates to {CurrentSelected.CurrentFoodItem.CarbCounterGrams}g Carbs";
+                $"One {CurrentSelected.CurrentFoodItem.CarbCounterSize}g portion equates to {CurrentSelected.CurrentFoodItem.CarbCounterGrams}g Carbs";
         }
         
         private void CalculateCarbs()
@@ -110,7 +110,7 @@ namespace CarbCalc
 
             Grid.Adapter = new MealCalcAdapter(this, CurrentSelected.ItemisedMeal);
 
-            CarbCalcText.Text = $"{Math.Round(CurrentSelected.ItemisedMeal.Sum(x=> x.ServingCarbs), 1)}g Carbs";
+            CarbCalcText.Text = $"Total: {Math.Round(CurrentSelected.ItemisedMeal.Sum(x=> x.ServingCarbs), 1)}g Carbs";
             ClearButton.Visibility = ViewStates.Visible;
         }
     }

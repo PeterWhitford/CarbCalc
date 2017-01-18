@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textFoodItemDesc"
-        android:padding="40px"
-        android:textSize="60px" />
+        android:padding="40px" />
     <LinearLayout
         android:id="@+id/LinearLayoutEntry"
         android:layout_height="wrap_content"
@@ -33,7 +32,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="40px"
-            android:hint="Enter Portion"
+            android:hint="Enter Portions"
             android:inputType="numberDecimal"
             android:textIsSelectable="true" />
     </LinearLayout>
@@ -55,18 +54,31 @@
             android:layout_weight="1"
             android:text="Clear" />
     </LinearLayout>
-    <TextView
-        android:text=""
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/LinearLayoutButtons"
         android:layout_height="wrap_content"
-        android:id="@+id/textCarbTotal"
-        android:textSize="100px"
-        android:layout_marginBottom="0.0dp" />
-    <ListView
-        android:scrollbars="vertical"
-        android:id="@+id/listview"
-        android:layout_marginTop="10dp"
         android:layout_width="fill_parent"
-        android:layout_height="400px" />
+        android:layout_alignParentBottom="true">
+        <ListView
+            android:scrollbars="vertical"
+            android:id="@+id/listview"
+            android:layout_marginTop="10dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/LinearLayoutButtons"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:text=""
+             android:padding="40px"
+           android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textCarbTotal"
+            android:textSize="100px"
+            android:layout_marginBottom="0.0dp" />
+    </LinearLayout>
 </LinearLayout>

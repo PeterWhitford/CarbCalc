@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Android.App;
 using Android.OS;
@@ -51,8 +52,6 @@ namespace CarbCalc
             if (!CurrentSelected.ItemisedMeal.Any()) return;
 
             ClearButton.Visibility = ViewStates.Visible;
-
-            GramsPerSize.RequestFocus();
 
             Portion.FocusChange += (sender, args) => { Grams.Text = ""; };
             Grams.FocusChange += (sender, args) => { Portion.Text = ""; };
@@ -117,7 +116,7 @@ namespace CarbCalc
 
             Grid.Adapter = new MealCalcAdapter(this, CurrentSelected.ItemisedMeal);
 
-            CarbCalcText.Text = $"{Math.Round(CurrentSelected.ItemisedMeal.Sum(x=> x.ServingCarbs), 1)}g Carbs";
+            CarbCalcText.Text = $"Total: {Math.Round(CurrentSelected.ItemisedMeal.Sum(x=> x.ServingCarbs), 1)}g Carbs";
             ClearButton.Visibility = ViewStates.Visible;
 
             SaveNewFoodItem();
@@ -132,6 +131,8 @@ namespace CarbCalc
             sql.Commit();
 
             CurrentSelected.OriginalItems.Add(CurrentSelected.CurrentFoodItem);
+
+            //CurrentSelected.Items = new List<FoodItem> {CurrentSelected.CurrentFoodItem};
 
             //SqlLiteDroid.ExportDatabaseToCsv();
         }
