@@ -119,7 +119,8 @@ namespace CarbCalc
             CarbCalcText.Text = $"Total: {Math.Round(CurrentSelected.ItemisedMeal.Sum(x=> x.ServingCarbs), 1)}g Carbs";
             ClearButton.Visibility = ViewStates.Visible;
 
-            SaveNewFoodItem();
+            if (NewFoodItem.Text != "New Food")
+                SaveNewFoodItem();
         }
 
         private void SaveNewFoodItem()
@@ -132,6 +133,9 @@ namespace CarbCalc
 
             CurrentSelected.OriginalItems.Add(CurrentSelected.CurrentFoodItem);
 
+            var message = Toast.MakeText(this, CurrentSelected.CurrentFoodItem.ItemName + " has been saved for next time.", ToastLength.Long);
+
+            message.Show();
             //CurrentSelected.Items = new List<FoodItem> {CurrentSelected.CurrentFoodItem};
 
             //SqlLiteDroid.ExportDatabaseToCsv();
